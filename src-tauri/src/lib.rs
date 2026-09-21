@@ -61,9 +61,13 @@ fn start_ws_server(clients:Arc<Mutex<Vec<WebSocket<TcpStream>>>>, app:AppHandle)
         loop {
             match listener.accept(){
                 Ok((stream,_))=>{
-                    let mut good=false;
-                    match accept_hdr(stream,|req:&Request,res:Response|{good=req.uri().path()=="/dmx";Ok(res)}){
-                        Ok(ws) if good=>{
+                    match accept_hdr(stream,|req:&Request,mut res:Response|{
+                        if req.uri().path()!="/dmx" {
+                            *res.status_mut()=tungstenite::http::StatusCode::NOT_FOUND;
+                        }
+                        Ok(res)
+                    }){
+                        Ok(ws)=>{
                             let _=ws.get_ref().set_nonblocking(true);
                             if let Ok(mut list)=clients.lock(){list.push(ws)}
                             let _=app.emit("bridge-ws-status","client-connected");
