@@ -32,15 +32,15 @@ jobs:
       - name: Rename DMG
         run: |
           DMG=$(find src-tauri/target/release/bundle/dmg -name '*.dmg' -print -quit)
-          cp "$DMG" VizBridge-0.1.0-macOS.dmg
+          cp "$DMG" VizBridge-0.2.0-macOS.dmg
       - uses: actions/upload-artifact@v4
         with:
           name: VizBridge-macOS-dmg
-          path: VizBridge-0.1.0-macOS.dmg
+          path: VizBridge-0.2.0-macOS.dmg
           if-no-files-found: error
       - name: Publish permanent GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.1.0 >/dev/null 2>&1 || gh release create v0.1.0 --title "VizBridge 0.1.0" --notes "First VizBridge macOS test build."
-          gh release upload v0.1.0 VizBridge-0.1.0-macOS.dmg --clobber
+          gh release view v0.2.0 >/dev/null 2>&1 || gh release create v0.2.0 --title "VizBridge 0.2.0" --notes "VizBridge Art-Net fan-out bridge for LumaViz."
+          gh release upload v0.2.0 VizBridge-0.2.0-macOS.dmg --clobber
