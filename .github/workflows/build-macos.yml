@@ -1,0 +1,23 @@
+name: Build macOS VizBridge DMG
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["src/**","src-tauri/**","package.json","package-lock.json","vite.config.ts","tsconfig.json"]
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm install
+      - run: npm run build
+      - run: npm run tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VizBridge-macOS-dmg
+          path: src-tauri/target/release/bundle/dmg/*.dmg
+          if-no-files-found: error
